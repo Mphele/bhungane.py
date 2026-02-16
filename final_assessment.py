@@ -126,10 +126,7 @@ def student_grade_processor(students):
             res["passing"].append({"name": name, "average": average})
 
     return res
-student_grade_processor([
-    {"name": "Alice", "grades": [85, 90, 88]},
-    {"name": "Bob", "grades": [55, 60, 58]}
-])
+
 
 def transaction_batcher(transactions, batch_size):
     """
