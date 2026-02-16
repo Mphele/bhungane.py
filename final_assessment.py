@@ -86,8 +86,21 @@ def password_validator_with_retry(max_attempts):
         - Print "Password accepted!" when valid
         - Print "Maximum attempts reached. Account locked." if exhausted
     """
-    # TODO: Implement this function
-    pass
+    import re
+    attempts = 1
+
+    while attempts <= max_attempts:
+        password = input("Enter password:")
+
+        if re.search(r"^[a-zA-Z0-9!@#$%\^&*]{8,}$", password):
+            print("Password accepted!")
+            break
+        else:
+            print("Invalid password. Try again.")
+            attempts += 1
+    
+    if attempts > max_attempts:
+        print("Maximum attempts reached. Account locked.")
 
 
 def student_grade_processor(students):
