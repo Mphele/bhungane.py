@@ -142,8 +142,15 @@ def transaction_batcher(transactions, batch_size):
     Raises:
         ValueError: If batch_size < 1
     """
-    # TODO: Implement this function
-    pass
+    res = []
+
+    if batch_size < 1:
+        raise ValueError
+
+    for t in range(0, len(transactions), batch_size):
+        res.append(transactions[t:t+batch_size])
+    
+    return res
 
 
 def network_graph_analyzer(network):
