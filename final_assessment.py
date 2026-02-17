@@ -227,10 +227,13 @@ def sum_of_digits(n):
     Raises:
         ValueError: If n is negative or not an integer
     """
-    # TODO: Implement this function using RECURSION
-    # Base case: single digit (n < 10)
-    # Recursive case: (n % 10) + sum_of_digits(n // 10)
-    pass
+    
+    if n < 0 or not isinstance(n, int):
+        raise ValueError
+    if n < 10:
+        return n
+    else:
+        return (n % 10) + sum_of_digits(n // 10) 
 
 
 def data_pipeline_processor(raw_data, transformations):
