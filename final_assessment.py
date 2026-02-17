@@ -166,7 +166,7 @@ def transaction_batcher(transactions, batch_size):
     return res
 
 
-def network_graph_analyzer(network):
+def network_graph_analyzer(network: dict[str, list[str]]):
     """
     Analyze network connectivity statistics.
     
@@ -176,8 +176,40 @@ def network_graph_analyzer(network):
     Returns:
         dict: Keys are total_connections, most_connected, isolated_nodes
     """
-    # TODO: Implement this function
-    pass
+    count = 0
+    longest_len = 0
+    isolated = []
+
+    res = {
+    "total_connections": 0,
+    "most_connected": None,
+    "isolated_nodes": []
+}
+    count_dict = {}
+
+
+    for k, v in network.items():
+        if len(v) > longest_len:
+            longest_len = len(v)
+        
+        if len(v) == 0:
+            res["isolated_nodes"].append(k)
+
+        if k in count_dict:
+            count_dict[k] += len(v)
+        else:
+            count_dict[k] = len(v)
+
+    for k, v in count_dict.items():
+        count += v
+        if v == longest_len:
+            res["most_connected"] = k
+
+    res["total_connections"] = count
+    res["isolated_nodes"].extend(isolated)
+
+    return res
+    
 
 
 def sum_of_digits(n):
