@@ -296,7 +296,6 @@ def leaderboard_ranker(scores):
         
     sorted_scores = sorted(scores, key=lambda s: s[1], reverse=True)
     res = []
-    pos = 1
 
     for idx, s in enumerate(sorted_scores):
         if idx == 0:
@@ -310,7 +309,6 @@ def leaderboard_ranker(scores):
     
     return res
 
-print(leaderboard_ranker([("A", 100), ("B", 100), ("C", 90)]))
 
 def smart_cache_system(capacity):
     """
