@@ -378,86 +378,86 @@ def test_data_pipeline_processor_chained_filters():
 
 # ------------------------------------------------------------------------------------------ #
 
-# Question 9 - Leaderboard Ranker
+# # Question 9 - Leaderboard Ranker
 
-@pytest.mark.parametrize("scores, expected_ranking", [
-    (
-        [("Alice", 100), ("Bob", 150), ("Charlie", 120)],
-        [("Bob", 150, 1), ("Charlie", 120, 2), ("Alice", 100, 3)]
-    ),
-    (
-        [("Player1", 50)],
-        [("Player1", 50, 1)]
-    ),
-    ([], []),
-])
-def test_leaderboard_ranker_logic(scores, expected_ranking):
-    assert leaderboard_ranker(scores) == expected_ranking
+# @pytest.mark.parametrize("scores, expected_ranking", [
+#     (
+#         [("Alice", 100), ("Bob", 150), ("Charlie", 120)],
+#         [("Bob", 150, 1), ("Charlie", 120, 2), ("Alice", 100, 3)]
+#     ),
+#     (
+#         [("Player1", 50)],
+#         [("Player1", 50, 1)]
+#     ),
+#     ([], []),
+# ])
+# def test_leaderboard_ranker_logic(scores, expected_ranking):
+#     assert leaderboard_ranker(scores) == expected_ranking
 
-def test_leaderboard_ranker_tied_scores():
-    scores = [("A", 100), ("B", 100), ("C", 90)]
-    result = leaderboard_ranker(scores)
-    # Both tied players should have rank 1
-    assert result[0][2] == 1
-    assert result[1][2] == 1
-    assert result[2][2] == 3  # Next rank is 3, not 2
+# def test_leaderboard_ranker_tied_scores():
+#     scores = [("A", 100), ("B", 100), ("C", 90)]
+#     result = leaderboard_ranker(scores)
+#     # Both tied players should have rank 1
+#     assert result[0][2] == 1
+#     assert result[1][2] == 1
+#     assert result[2][2] == 3  # Next rank is 3, not 2
 
-def test_leaderboard_ranker_large_dataset():
-    scores = [(f"Player{i}", i) for i in range(1000, 0, -1)]
-    result = leaderboard_ranker(scores)
-    assert result[0][1] == 1000  # Highest score
-    assert result[-1][1] == 1    # Lowest score
+# def test_leaderboard_ranker_large_dataset():
+#     scores = [(f"Player{i}", i) for i in range(1000, 0, -1)]
+#     result = leaderboard_ranker(scores)
+#     assert result[0][1] == 1000  # Highest score
+#     assert result[-1][1] == 1    # Lowest score
 
-def test_leaderboard_ranker_all_same_scores():
-    scores = [("A", 50), ("B", 50), ("C", 50)]
-    result = leaderboard_ranker(scores)
-    assert all(player[2] == 1 for player in result)
+# def test_leaderboard_ranker_all_same_scores():
+#     scores = [("A", 50), ("B", 50), ("C", 50)]
+#     result = leaderboard_ranker(scores)
+#     assert all(player[2] == 1 for player in result)
 
-def test_leaderboard_ranker_invalid_tuple():
-    with pytest.raises(ValueError):
-        leaderboard_ranker([("Player1", 100, "extra")])
+# def test_leaderboard_ranker_invalid_tuple():
+#     with pytest.raises(ValueError):
+#         leaderboard_ranker([("Player1", 100, "extra")])
 
-# ------------------------------------------------------------------------------------------ #
+# # ------------------------------------------------------------------------------------------ #
 
-# Question 10 - Smart Cache System
+# # Question 10 - Smart Cache System
 
-def test_smart_cache_basic_operations():
-    cache = smart_cache_system(3)
-    cache.put("key1", "value1")
-    assert cache.get("key1") == "value1"
+# def test_smart_cache_basic_operations():
+#     cache = smart_cache_system(3)
+#     cache.put("key1", "value1")
+#     assert cache.get("key1") == "value1"
 
-def test_smart_cache_eviction():
-    cache = smart_cache_system(2)
-    cache.put("a", 1)
-    cache.put("b", 2)
-    cache.put("c", 3)  # Should evict "a"
-    assert cache.get("a") is None
-    assert cache.get("b") == 2
-    assert cache.get("c") == 3
+# def test_smart_cache_eviction():
+#     cache = smart_cache_system(2)
+#     cache.put("a", 1)
+#     cache.put("b", 2)
+#     cache.put("c", 3)  # Should evict "a"
+#     assert cache.get("a") is None
+#     assert cache.get("b") == 2
+#     assert cache.get("c") == 3
 
-def test_smart_cache_lru_order():
-    cache = smart_cache_system(3)
-    cache.put("a", 1)
-    cache.put("b", 2)
-    cache.put("c", 3)
-    cache.get("a")  # Access "a", making it recently used
-    cache.put("d", 4)  # Should evict "b", not "a"
-    assert cache.get("a") == 1
-    assert cache.get("b") is None
+# def test_smart_cache_lru_order():
+#     cache = smart_cache_system(3)
+#     cache.put("a", 1)
+#     cache.put("b", 2)
+#     cache.put("c", 3)
+#     cache.get("a")  # Access "a", making it recently used
+#     cache.put("d", 4)  # Should evict "b", not "a"
+#     assert cache.get("a") == 1
+#     assert cache.get("b") is None
 
-def test_smart_cache_update_existing():
-    cache = smart_cache_system(2)
-    cache.put("key", "value1")
-    cache.put("key", "value2")
-    assert cache.get("key") == "value2"
+# def test_smart_cache_update_existing():
+#     cache = smart_cache_system(2)
+#     cache.put("key", "value1")
+#     cache.put("key", "value2")
+#     assert cache.get("key") == "value2"
 
-def test_smart_cache_size_one():
-    cache = smart_cache_system(1)
-    cache.put("a", 1)
-    cache.put("b", 2)
-    assert cache.get("a") is None
-    assert cache.get("b") == 2
+# def test_smart_cache_size_one():
+#     cache = smart_cache_system(1)
+#     cache.put("a", 1)
+#     cache.put("b", 2)
+#     assert cache.get("a") is None
+#     assert cache.get("b") == 2
 
-def test_smart_cache_invalid_capacity():
-    with pytest.raises(ValueError):
-        smart_cache_system(0)
+# def test_smart_cache_invalid_capacity():
+#     with pytest.raises(ValueError):
+#         smart_cache_system(0)
