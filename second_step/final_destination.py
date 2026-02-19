@@ -13,7 +13,27 @@ def inventory_report_generator(inventory_data):
         KeyError: If required keys are missing
         ValueError: If unit_cost or stock_count is negative
     """
-    pass
+    valid_keys = ["category", "unit_cost", "stock_count"]
+    res = {}
+    
+    for data in inventory_data:
+        if len(data) != 3:
+            raise KeyError
+        
+        category = data["category"]
+        cost = data["unit_cost"]
+        stock_count = data["stock_count"]
+
+        if cost < 0 or stock_count < 0:
+            raise ValueError
+
+        if category not in res:
+            res[category] = {"total_value": cost * stock_count, "total_stock": stock_count}
+        else:
+            res[category]["total_value"] += cost * stock_count
+            res[category]["total_stock"] += stock_count
+    
+    return res
 
 
 def rainfall_analyzer(readings, threshold):
