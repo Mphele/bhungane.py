@@ -66,7 +66,6 @@ def rainfall_analyzer(readings, threshold):
         print("All readings within threshold")
         print(f"Average: {(sum(readings) / len(readings)):.02f}")
 
-rainfall_analyzer([5, 25, 8, 30], threshold=20)
 
 def username_validator_with_retry(max_attempts):
     """
@@ -83,7 +82,26 @@ def username_validator_with_retry(max_attempts):
         - Print "Username accepted!" when valid
         - Print "Maximum attempts reached. Access denied." if exhausted
     """
-    pass
+    attempts = 0
+
+    while attempts < max_attempts:
+        username = input("Enter username:")
+
+        letters = any(char.isalpha() for char in username)
+        digits = any(char.isdigit() for char in username)
+        underscore = True if "_" in username else False
+        length = 5 <= len(username) <= 15
+
+        if letters and digits and username and length and underscore:
+            print("Username accepted!")
+            break
+        else:
+            print("Invalid username. Try again.")
+            attempts += 1
+    
+    if attempts >= max_attempts:
+        print("Maximum attempts reached. Access denied.")
+
 
 
 def employee_performance_processor(employees):
