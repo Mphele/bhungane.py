@@ -274,7 +274,26 @@ def data_pipeline_processor(raw_data, transformations):
     Raises:
         ValueError: For unknown transformations
     """
-    pass
+    
+    if any(transformation not in ["double","add_ten", "filter_even", "square"  ] for transformation in transformations):
+        raise ValueError
+    
+    new_list = raw_data.copy()
+    for trans in transformations:
+        if trans =="double":
+            new_list = [i*2 for i in new_list]
+        
+        elif trans == "add_ten":
+            new_list = [i+10 for i in new_list]
+        
+        elif trans == "filter_even":
+            new_list = [i for i in new_list if i%2==0]
+        
+        else:
+            new_list = [i**2 for i in new_list]
+    
+    return new_list
+
 
 
 def leaderboard_ranker(scores):
@@ -290,7 +309,40 @@ def leaderboard_ranker(scores):
     Raises:
         ValueError: If tuple doesn't have exactly 2 elements
     """
-    pass
+    if not scores:
+        return []
+    
+    with_ranking = []
+    rank = 1
+    count = 1
+    current_score = 0
+    unsorted = dict(scores)
+
+    print(f"unsorted {unsorted}")
+    sorted_values = sorted(unsorted.items(), key=lambda item:item[1], reverse=True)
+    print(f"sorted {sorted_values}")
+
+    current_score =sorted_values[0][1] 
+    print(current_score)
+
+    for player in sorted_values:
+        player_name, score = player
+
+        if score == current_score:
+            with_ranking.append((player_name, score, rank))
+            current_score = score
+        else:
+            with_ranking.append((player_name, score, count))
+            rank = count
+            current_score = score
+        
+        count+=1
+    
+    return with_ranking
+
+
+
+print(leaderboard_ranker([("Alice", 100), ("Bob", 150), ("Charlie", 120)]))
 
 
 def smart_cache_system(capacity):
@@ -314,4 +366,9 @@ def smart_cache_system(capacity):
         - When full, evict least recently used item
         - get() and put() mark items as recently used
     """
-    pass
+
+    
+
+
+    
+
