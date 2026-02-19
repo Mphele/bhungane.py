@@ -1,5 +1,9 @@
+# final_assessment_v2.py
+# Complete the following functions according to their docstrings
 
-def inventory_report_generator(inventory_data):
+from statistics import mean
+
+def inventory_report_generator(inventory_data:list[dict]):
     """
     Generate inventory report aggregating stock and value by category.
 
@@ -13,27 +17,27 @@ def inventory_report_generator(inventory_data):
         KeyError: If required keys are missing
         ValueError: If unit_cost or stock_count is negative
     """
-    valid_keys = ["category", "unit_cost", "stock_count"]
-    res = {}
-    
-    for data in inventory_data:
-        if len(data) != 3:
-            raise KeyError
-        
-        category = data["category"]
-        cost = data["unit_cost"]
-        stock_count = data["stock_count"]
+    final_dict ={}
 
-        if cost < 0 or stock_count < 0:
+    for item in inventory_data:
+
+        value = item["unit_cost"]*item["stock_count"]
+        if value<0:
+            raise ValueError
+        
+        if item["stock_count"]<0:
             raise ValueError
 
-        if category not in res:
-            res[category] = {"total_value": cost * stock_count, "total_stock": stock_count}
+        if item["category"] not in final_dict:
+            
+            final_dict[item["category"]] = {"total_value":value, "total_stock": item["stock_count"] }
+        
         else:
-            res[category]["total_value"] += cost * stock_count
-            res[category]["total_stock"] += stock_count
-    
-    return res
+            final_dict[item["category"]]["total_value"] +=value
+            final_dict[item["category"]]["total_stock"]+= item["stock_count"]
+        
+    return final_dict
+
 
 
 def rainfall_analyzer(readings, threshold):
@@ -50,21 +54,28 @@ def rainfall_analyzer(readings, threshold):
         - "Warning: X readings above Y" otherwise
         - "Average: X" (always when data exists, formatted to 2 decimals)
     """
+
     if not readings:
         print("No rainfall data")
+        
     
-    count = 0
-    
-    for reading in readings:
-        if reading > threshold:
-            count += 1
-    
-    if count > 0:
-        print(f"Warning: {count} readings above {threshold}")
-        print(f"Average: {(sum(readings) / len(readings)):.02f}")
-    elif len(readings) != 0:
+    elif all(items<=threshold for items in readings):
         print("All readings within threshold")
-        print(f"Average: {(sum(readings) / len(readings)):.02f}")
+        print(f"Average: {mean(readings):.2f}")
+    
+    else:
+        oultliers = len([i for i in readings if i>threshold])
+        print(f"Warning: {oultliers} readings above {threshold}")
+        print(f"Average: {mean(readings):.2f}")
+
+
+
+
+
+
+    
+
+
 
 
 def username_validator_with_retry(max_attempts):
@@ -82,27 +93,35 @@ def username_validator_with_retry(max_attempts):
         - Print "Username accepted!" when valid
         - Print "Maximum attempts reached. Access denied." if exhausted
     """
-    attempts = 0
-
-    while attempts < max_attempts:
+    
+    for _ in range(max_attempts):
         username = input("Enter username:")
 
-        letters = any(char.isalpha() for char in username)
-        digits = any(char.isdigit() for char in username)
-        underscore = True if "_" in username else False
-        length = 5 <= len(username) <= 15
+        validity = True
 
-        if letters and digits and username and length and underscore:
-            print("Username accepted!")
-            break
-        else:
+        if len(username)>15 or len(username)<5:
+            validity = False
             print("Invalid username. Try again.")
-            attempts += 1
-    
-    if attempts >= max_attempts:
+            continue
+
+        if not all(char.isalnum() or char== "_" for char in username):
+            validity = False
+            print("Invalid username. Try again.")
+            continue
+
+        if not username[0].isalpha():
+            validity = False
+            print("Invalid username. Try again.")
+            continue
+
+
+        print("Username accepted!")
+        break
+
+    if not validity:
         print("Maximum attempts reached. Access denied.")
 
-
+# username_validator_with_retry(3)``
 
 def employee_performance_processor(employees):
     """
@@ -119,30 +138,10 @@ def employee_performance_processor(employees):
         KeyError: If required keys are missing
         ValueError: If scores list is empty
     """
-    res = {
-        "high_performers": [],
-        "needs_improvement": []
-    }
+    pass
 
-    for employee in employees:
-        if len(employee) != 2:
-            raise KeyError
-        
-        name = employee["name"]
-        scores = employee["scores"]
 
-        if len(scores) > 0: 
-            average = round(sum(scores) / len(scores), 2) 
 
-        if len(scores) == 0:
-            raise ValueError
-        
-        if average >= 80:
-            res["high_performers"].append({"name": name, "average": average})
-        else:
-            res["needs_improvement"].append({"name": name, "average": average})
-    
-    return res
 
 
 def order_batcher(orders, batch_size):
@@ -178,7 +177,7 @@ def social_network_analyzer(network: dict[str, list[str]]):
     pass
 
 
-def count_vowels(s, count = 0):
+def count_vowels(s, count=0):
     """
     Count vowels in a string using RECURSION.
 
@@ -193,19 +192,8 @@ def count_vowels(s, count = 0):
     Raises:
         TypeError: If s is not a string
     """
-    vowels = "aeiouAEIOU"
-    if not isinstance(s, str):
-        raise TypeError
-    
-    if not s:
-        return 0
-    
-    if s[0] in vowels:
-        return 1 + count_vowels(s[1:])
-    
-    else:
-        return count_vowels(s[1:])
-    
+    pass
+
 
 def text_pipeline_processor(raw_texts, transformations):
     """

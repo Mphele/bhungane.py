@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "first_step"
+        "second_step"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true

@@ -144,181 +144,181 @@ def test_username_validator_must_start_with_letter(monkeypatch):
     assert "Username accepted!" in out
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Question 4 – Employee Performance Processor
-# ──────────────────────────────────────────────────────────────────────────────
-
-@pytest.mark.parametrize("employees, expected", [
-    (
-        [
-            {"name": "Alice", "scores": [90, 85, 88]},
-            {"name": "Bob",   "scores": [70, 65, 75]},
-        ],
-        {
-            "high_performers":    [{"name": "Alice", "average": 87.67}],
-            "needs_improvement":  [{"name": "Bob",   "average": 70.0}],
-        },
-    ),
-    ([], {"high_performers": [], "needs_improvement": []}),
-])
-def test_employee_performance_processor_logic(employees, expected):
-    result = employee_performance_processor(employees)
-    for key in ("high_performers", "needs_improvement"):
-        for emp in result[key]:
-            emp["average"] = round(emp["average"], 2)
-        for emp in expected[key]:
-            emp["average"] = round(emp["average"], 2)
-    assert result == expected
-
-
-def test_employee_performance_processor_exact_boundary():
-    employees = [{"name": "Edge", "scores": [80, 80, 80]}]
-    result = employee_performance_processor(employees)
-    assert len(result["high_performers"]) == 1
-    assert result["high_performers"][0]["name"] == "Edge"
-
-
-def test_employee_performance_processor_empty_scores():
-    with pytest.raises(ValueError):
-        employee_performance_processor([{"name": "Test", "scores": []}])
-
-
-def test_employee_performance_processor_missing_keys():
-    with pytest.raises(KeyError):
-        employee_performance_processor([{"name": "Test"}])
-
-
-def test_employee_performance_processor_mixed():
-    employees = [
-        {"name": "Top",  "scores": [95, 90]},
-        {"name": "Low",  "scores": [55, 60]},
-        {"name": "Mid",  "scores": [82, 78]},
-    ]
-    result = employee_performance_processor(employees)
-    assert len(result["high_performers"]) == 2
-    assert len(result["needs_improvement"]) == 1
-
-
 # # ──────────────────────────────────────────────────────────────────────────────
-# # Question 5 – Order Batcher
+# # Question 4 – Employee Performance Processor
 # # ──────────────────────────────────────────────────────────────────────────────
 
-# @pytest.mark.parametrize("orders, batch_size, expected", [
+# @pytest.mark.parametrize("employees, expected", [
 #     (
-#         ["O1", "O2", "O3", "O4", "O5"],
-#         2,
-#         [["O1", "O2"], ["O3", "O4"], ["O5"]],
+#         [
+#             {"name": "Alice", "scores": [90, 85, 88]},
+#             {"name": "Bob",   "scores": [70, 65, 75]},
+#         ],
+#         {
+#             "high_performers":    [{"name": "Alice", "average": 87.67}],
+#             "needs_improvement":  [{"name": "Bob",   "average": 70.0}],
+#         },
 #     ),
-#     (["A", "B", "C"], 3, [["A", "B", "C"]]),
-#     ([], 4, []),
+#     ([], {"high_performers": [], "needs_improvement": []}),
 # ])
-# def test_order_batcher_logic(orders, batch_size, expected):
-#     assert order_batcher(orders, batch_size) == expected
+# def test_employee_performance_processor_logic(employees, expected):
+#     result = employee_performance_processor(employees)
+#     for key in ("high_performers", "needs_improvement"):
+#         for emp in result[key]:
+#             emp["average"] = round(emp["average"], 2)
+#         for emp in expected[key]:
+#             emp["average"] = round(emp["average"], 2)
+#     assert result == expected
 
 
-# def test_order_batcher_invalid_batch_size():
+# def test_employee_performance_processor_exact_boundary():
+#     employees = [{"name": "Edge", "scores": [80, 80, 80]}]
+#     result = employee_performance_processor(employees)
+#     assert len(result["high_performers"]) == 1
+#     assert result["high_performers"][0]["name"] == "Edge"
+
+
+# def test_employee_performance_processor_empty_scores():
 #     with pytest.raises(ValueError):
-#         order_batcher(["A", "B"], 0)
+#         employee_performance_processor([{"name": "Test", "scores": []}])
 
 
-# def test_order_batcher_batch_size_one():
-#     assert order_batcher(["X", "Y", "Z"], 1) == [["X"], ["Y"], ["Z"]]
+# def test_employee_performance_processor_missing_keys():
+#     with pytest.raises(KeyError):
+#         employee_performance_processor([{"name": "Test"}])
 
 
-# def test_order_batcher_large_dataset():
-#     orders = [f"ORD{i}" for i in range(1000)]
-#     result = order_batcher(orders, 50)
-#     assert len(result) == 20
-#     assert all(len(b) == 50 for b in result)
+# def test_employee_performance_processor_mixed():
+#     employees = [
+#         {"name": "Top",  "scores": [95, 90]},
+#         {"name": "Low",  "scores": [55, 60]},
+#         {"name": "Mid",  "scores": [82, 78]},
+#     ]
+#     result = employee_performance_processor(employees)
+#     assert len(result["high_performers"]) == 2
+#     assert len(result["needs_improvement"]) == 1
 
 
-# def test_order_batcher_preserves_order():
-#     orders = ["first", "second", "third", "fourth"]
-#     result = order_batcher(orders, 2)
-#     assert result[0][0] == "first"
-#     assert result[-1][-1] == "fourth"
+# # # ──────────────────────────────────────────────────────────────────────────────
+# # # Question 5 – Order Batcher
+# # # ──────────────────────────────────────────────────────────────────────────────
+
+# # @pytest.mark.parametrize("orders, batch_size, expected", [
+# #     (
+# #         ["O1", "O2", "O3", "O4", "O5"],
+# #         2,
+# #         [["O1", "O2"], ["O3", "O4"], ["O5"]],
+# #     ),
+# #     (["A", "B", "C"], 3, [["A", "B", "C"]]),
+# #     ([], 4, []),
+# # ])
+# # def test_order_batcher_logic(orders, batch_size, expected):
+# #     assert order_batcher(orders, batch_size) == expected
+
+
+# # def test_order_batcher_invalid_batch_size():
+# #     with pytest.raises(ValueError):
+# #         order_batcher(["A", "B"], 0)
+
+
+# # def test_order_batcher_batch_size_one():
+# #     assert order_batcher(["X", "Y", "Z"], 1) == [["X"], ["Y"], ["Z"]]
+
+
+# # def test_order_batcher_large_dataset():
+# #     orders = [f"ORD{i}" for i in range(1000)]
+# #     result = order_batcher(orders, 50)
+# #     assert len(result) == 20
+# #     assert all(len(b) == 50 for b in result)
+
+
+# # def test_order_batcher_preserves_order():
+# #     orders = ["first", "second", "third", "fourth"]
+# #     result = order_batcher(orders, 2)
+# #     assert result[0][0] == "first"
+# #     assert result[-1][-1] == "fourth"
+
+
+# # # ──────────────────────────────────────────────────────────────────────────────
+# # # Question 6 – Social Network Analyzer
+# # # ──────────────────────────────────────────────────────────────────────────────
+
+# # @pytest.mark.parametrize("network, expected", [
+# #     (
+# #         {"Alice": ["Bob", "Carol"], "Bob": ["Carol"], "Carol": []},
+# #         {"total_follows": 3, "most_followed": "Carol", "no_followers": ["Alice"]},
+# #     ),
+# #     (
+# #         {"X": [], "Y": [], "Z": []},
+# #         {"total_follows": 0, "most_followed": None, "no_followers": ["X", "Y", "Z"]},
+# #     ),
+# #     ({}, {"total_follows": 0, "most_followed": None, "no_followers": []}),
+# # ])
+# # def test_social_network_analyzer_logic(network, expected):
+# #     result = social_network_analyzer(network)
+# #     assert result["total_follows"] == expected["total_follows"]
+# #     assert set(result["no_followers"]) == set(expected["no_followers"])
+# #     if expected["most_followed"] is None:
+# #         assert result["most_followed"] is None
+# #     else:
+# #         # Accept any user with the maximum in-degree
+# #         all_followed = [f for follows in network.values() for f in follows]
+# #         max_count = max(all_followed.count(u) for u in network) if all_followed else 0
+# #         top_users = [u for u in network if all_followed.count(u) == max_count]
+# #         assert result["most_followed"] in top_users
+
+
+# # def test_social_network_analyzer_single_user():
+# #     result = social_network_analyzer({"Solo": []})
+# #     assert result["total_follows"] == 0
+# #     assert result["no_followers"] == ["Solo"]
+
+
+# # def test_social_network_analyzer_no_isolates():
+# #     network = {"A": ["B"], "B": ["A"]}
+# #     result = social_network_analyzer(network)
+# #     assert result["no_followers"] == []
+# #     assert result["total_follows"] == 2
 
 
 # # ──────────────────────────────────────────────────────────────────────────────
-# # Question 6 – Social Network Analyzer
+# # Question 7 – Count Vowels (Recursive)
 # # ──────────────────────────────────────────────────────────────────────────────
 
-# @pytest.mark.parametrize("network, expected", [
-#     (
-#         {"Alice": ["Bob", "Carol"], "Bob": ["Carol"], "Carol": []},
-#         {"total_follows": 3, "most_followed": "Carol", "no_followers": ["Alice"]},
-#     ),
-#     (
-#         {"X": [], "Y": [], "Z": []},
-#         {"total_follows": 0, "most_followed": None, "no_followers": ["X", "Y", "Z"]},
-#     ),
-#     ({}, {"total_follows": 0, "most_followed": None, "no_followers": []}),
+# @pytest.mark.parametrize("s, expected", [
+#     ("hello", 2),
+#     ("",      0),
+#     ("AEIOU", 5),
+#     ("rhythm", 0),
+#     ("Python programming", 4),
 # ])
-# def test_social_network_analyzer_logic(network, expected):
-#     result = social_network_analyzer(network)
-#     assert result["total_follows"] == expected["total_follows"]
-#     assert set(result["no_followers"]) == set(expected["no_followers"])
-#     if expected["most_followed"] is None:
-#         assert result["most_followed"] is None
-#     else:
-#         # Accept any user with the maximum in-degree
-#         all_followed = [f for follows in network.values() for f in follows]
-#         max_count = max(all_followed.count(u) for u in network) if all_followed else 0
-#         top_users = [u for u in network if all_followed.count(u) == max_count]
-#         assert result["most_followed"] in top_users
+# def test_count_vowels_logic(s, expected):
+#     assert count_vowels(s) == expected
 
 
-# def test_social_network_analyzer_single_user():
-#     result = social_network_analyzer({"Solo": []})
-#     assert result["total_follows"] == 0
-#     assert result["no_followers"] == ["Solo"]
+# def test_count_vowels_non_string():
+#     with pytest.raises(TypeError):
+#         count_vowels(123)
 
 
-# def test_social_network_analyzer_no_isolates():
-#     network = {"A": ["B"], "B": ["A"]}
-#     result = social_network_analyzer(network)
-#     assert result["no_followers"] == []
-#     assert result["total_follows"] == 2
+# def test_count_vowels_is_recursive():
+#     with patch("final_destination.count_vowels", wraps=count_vowels) as mocked:
+#         mocked("hello")
+#         assert mocked.call_count > 1, "Recursion not detected"
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Question 7 – Count Vowels (Recursive)
-# ──────────────────────────────────────────────────────────────────────────────
-
-@pytest.mark.parametrize("s, expected", [
-    ("hello", 2),
-    ("",      0),
-    ("AEIOU", 5),
-    ("rhythm", 0),
-    ("Python programming", 4),
-])
-def test_count_vowels_logic(s, expected):
-    assert count_vowels(s) == expected
+# def test_count_vowels_base_case():
+#     assert count_vowels("") == 0
+#     assert count_vowels("b") == 0
+#     assert count_vowels("a") == 1
 
 
-def test_count_vowels_non_string():
-    with pytest.raises(TypeError):
-        count_vowels(123)
-
-
-def test_count_vowels_is_recursive():
-    with patch("final_destination.count_vowels", wraps=count_vowels) as mocked:
-        mocked("hello")
-        assert mocked.call_count > 1, "Recursion not detected"
-
-
-def test_count_vowels_base_case():
-    assert count_vowels("") == 0
-    assert count_vowels("b") == 0
-    assert count_vowels("a") == 1
-
-
-def test_count_vowels_recursive_params():
-    with patch("final_destination.count_vowels", wraps=count_vowels) as mocked:
-        mocked("aeiou")
-        for call in mocked.call_args_list:
-            args, _ = call
-            assert isinstance(args[0], str)
+# def test_count_vowels_recursive_params():
+#     with patch("final_destination.count_vowels", wraps=count_vowels) as mocked:
+#         mocked("aeiou")
+#         for call in mocked.call_args_list:
+#             args, _ = call
+#             assert isinstance(args[0], str)
 
 
 # # ──────────────────────────────────────────────────────────────────────────────
