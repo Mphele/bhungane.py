@@ -1,84 +1,82 @@
 # final_assessment.py
-# Complete the following functions to make all tests pass
+# Complete the following functions according to their docstrings
+import statistics
 
 
 def sales_report_generator(sales_data):
     """
     Generate sales report aggregating revenue and units by product.
-    
+
     Args:
         sales_data: List of dicts with keys: product, price, quantity
-        
+
     Returns:
         dict: Keys are products, values are dicts with total_revenue and units_sold
-        
+
     Raises:
         KeyError: If required keys are missing
         ValueError: If price or quantity is negative
     """
-    res = {}
     
-    for data in sales_data:
-        if list(data.keys()) != ["product", "price", "quantity"]:
-            raise KeyError
-        
-        prod = data["product"]
-        price = data["price"]
-        quantity = data["quantity"]
+    new_dict = {}
 
-        if price < 0 or quantity < 0:
+    for item in sales_data:
+        if item["price"]<0:
             raise ValueError
-
-        if prod not in res:
-            res[prod] = {"total_revenue": 0,
-                         "units_sold": 0}
-            
-        res[prod]["total_revenue"] += price * quantity
-        res[prod]["units_sold"] += quantity
+        item_revenue = item["price"]*item["quantity"]
+        if item["product"] not in new_dict:
+            new_dict[item["product"]] = {"total_revenue":item_revenue,
+                                          "units_sold":item["quantity"]}
+        else:
+             new_dict[item["product"]]["total_revenue"]+=item_revenue
+             new_dict[item["product"]]["units_sold"]+=item["quantity"]
     
-    return res
+    return new_dict
+
 
 
 def temperature_analyzer(temperatures, threshold):
     """
     Analyze temperature readings against a threshold.
-    
+
     Args:
         temperatures: List of temperature readings
         threshold: Minimum acceptable temperature
-        
+
     Prints:
         - "No temperature data" if empty
         - "All temperatures above threshold" if all >= threshold
         - "Warning: X readings below Y" otherwise
         - "Average: X" (always, formatted to 2 decimals)
     """
-    count = 0
-
-    for temp in temperatures:
-        if temp < threshold:
-            count += 1
     
     if not temperatures:
         print("No temperature data")
+        
     
-    if len(temperatures) == 0:
-        pass
-    elif count > 0:
-        print(f"Warning: {count} readings below {threshold}")
-        print(f"Average: {sum(temperatures) / len(temperatures):.2f}")
-    elif count == 0:
-        print(f"All temperatures above threshold")
-        print(f"Average: {sum(temperatures) / len(temperatures):.2f}")
+    elif all(temps>=threshold for temps in temperatures):
+        print("All temperatures above threshold")
+        average = statistics.mean(temperatures)
+        print(f"Average: {average:.2f}")
+    
+    else:
+        belowers = len([temp for temp in temperatures if temp<threshold])
+        print(f"Warning: {belowers} readings below {threshold}")
+        average = statistics.mean(temperatures)
+        print(f"Average: {average:.2f}")
+
+    
+
+
 
 
 def password_validator_with_retry(max_attempts):
     """
     Validate password with limited retry attempts.
-    
+
     Args:
         max_attempts: Maximum number of attempts allowed
-        
+
     Behavior:
         - Prompt "Enter password:" for each attempt
         - Valid password requires: 8+ chars, upper, lower, digit, special (!@#$%^&*)
@@ -86,269 +84,234 @@ def password_validator_with_retry(max_attempts):
         - Print "Password accepted!" when valid
         - Print "Maximum attempts reached. Account locked." if exhausted
     """
-    import re
-    attempts = 1
-
-    while attempts <= max_attempts:
+    
+    for _ in range(max_attempts):
         password = input("Enter password:")
 
-        if re.search(r"^[a-zA-Z0-9!@#$%\^&*]{8,}$", password):
-            print("Password accepted!")
-            break
-        else:
+        validity = True
+
+        if len(password)<8:
+            validity = False
             print("Invalid password. Try again.")
-            attempts += 1
-    
-    if attempts > max_attempts:
+            continue
+
+        if not any(char.isupper() for char in password):
+            validity = False
+            print("Invalid password. Try again.")
+            continue
+
+        if not any(char.islower() for char in password):
+            validity = False
+            print("Invalid password. Try again.")
+            continue
+
+        if not any(char.isdigit() for char in password):
+            validity = False
+            print("Invalid password. Try again.")
+            continue
+
+        if not any(char in '!@#$%^&*' for char in password):
+            validity = False
+            print("Invalid password. Try again.")
+            continue
+
+        print("Password accepted!")
+        break
+
+    if not validity:
         print("Maximum attempts reached. Account locked.")
+
+
+
 
 
 def student_grade_processor(students):
     """
     Categorize students by passing/failing status with averages.
-    
+
     Args:
         students: List of dicts with keys: name, grades (list)
-        
+
     Returns:
         dict: Keys "passing" and "failing", values are lists of dicts with name and average
-        
+
     Raises:
         KeyError: If required keys missing
         ValueError: If grades list is empty
     """
-    res = {"passing": [], "failing": []}
 
-    for s in students:
-        if set(s.keys()) != {"name", "grades"}:
-            raise KeyError
-        
-        grades = s["grades"]
-        name = s["name"]
+    classification = {'passing':[], 'failing':[]}
 
-        if not grades:
+    for student in students:
+        if not student["grades"]:
             raise ValueError
-        
-        average = float(sum(grades) / len(grades))
-        average = round(average, 2)
-
-        if average < 60:
-            res["failing"].append({"name": name, "average": average})
-
+        student_average = statistics.mean(student["grades"])
+        if student_average>=60:
+            classification["passing"].append({"name":student["name"], 'average':student_average})
         else:
-            res["passing"].append({"name": name, "average": average})
+            classification["failing"].append({"name":student["name"], 'average':student_average})
+        
+    
+    return classification
 
-    return res
+
 
 
 def transaction_batcher(transactions, batch_size):
     """
     Split transactions into batches of specified size.
-    
+
     Args:
         transactions: List of transactions
         batch_size: Number of transactions per batch
-        
+
     Returns:
         list: List of batches (each batch is a list)
-        
+
     Raises:
         ValueError: If batch_size < 1
     """
-    res = []
-
-    if batch_size < 1:
-        raise ValueError
-
-    for t in range(0, len(transactions), batch_size):
-        res.append(transactions[t:t+batch_size])
     
-    return res
+    if not transactions:
+        return []
+    
+    if batch_size<1:
+        raise ValueError
+    
+    larger = []
+    smaller = []
+    for item in transactions:
+        if len(smaller)==batch_size:
+            larger.append(smaller)
+            smaller=[]
+        smaller.append(item)
+    
+    if smaller:
+        larger.append(smaller)
+    
+    return larger
 
 
 def network_graph_analyzer(network: dict[str, list[str]]):
     """
     Analyze network connectivity statistics.
-    
+
     Args:
         network: Dict where keys are nodes, values are lists of connected nodes
-        
+
     Returns:
         dict: Keys are total_connections, most_connected, isolated_nodes
     """
-    count = 0
-    longest_len = 0
+
+    if not network:
+        return {"total_connections": 0, "most_connected": None, "isolated_nodes": []}
+    
+    total_cons = 0
     isolated = []
+    node_to_con ={}
 
-    res = {
-    "total_connections": 0,
-    "most_connected": None,
-    "isolated_nodes": []
-}
-    count_dict = {}
-
-
-    for k, v in network.items():
-        if len(v) > longest_len:
-            longest_len = len(v)
+    for node, connections in network.items():
+        total_cons+= len(connections)
+        if not connections:
+            isolated.append(node)
         
-        if len(v) == 0:
-            res["isolated_nodes"].append(k)
+        node_to_con[node]=len(connections)
+    
+    most_connected = list(dict(sorted(network.items(), reverse=True, key=lambda item:item[1])))[0]
+    return {"total_connections": total_cons, "most_connected": most_connected, "isolated_nodes":isolated}
 
-        if k in count_dict:
-            count_dict[k] += len(v)
-        else:
-            count_dict[k] = len(v)
+        
 
-    for k, v in count_dict.items():
-        count += v
-        if v == longest_len:
-            res["most_connected"] = k
 
-    res["total_connections"] = count
-    res["isolated_nodes"].extend(isolated)
 
-    return res
     
 
 
 def sum_of_digits(n):
     """
     Calculate sum of digits using RECURSION.
-    
+
     IMPORTANT: You MUST use recursion. Iterative solutions will fail tests.
-    
+
     Args:
         n: A non-negative integer
-        
+
     Returns:
         int: Sum of all digits
-        
+
     Raises:
         ValueError: If n is negative or not an integer
     """
-    
-    if n < 0 or not isinstance(n, int):
+
+    if not isinstance(n, int) or n<0:
         raise ValueError
-    if n < 10:
-        return n
+    
+    if n ==0:
+        return 0
+    
     else:
-        return (n % 10) + sum_of_digits(n // 10) 
+        return (n%10)+ sum_of_digits(n//10)
+
 
 
 def data_pipeline_processor(raw_data, transformations):
     """
     Apply sequence of transformations to data.
-    
+
     Args:
         raw_data: List of numbers
         transformations: List of transformation names
-        
+
     Available transformations:
         - "double": multiply by 2
         - "add_ten": add 10
         - "filter_even": keep only even numbers
         - "square": square each number
-        
+
     Returns:
         list: Transformed data
-        
+
     Raises:
         ValueError: For unknown transformations
     """
-
-    trans = ["double", "add_ten", "filter_even", "square"]
-
-    for t in transformations:
-        if t not in trans:
-            raise ValueError
-        
-    for t in transformations:
-        if t == "double":
-            raw_data = [data * 2 for data in raw_data]
-        if t == "filter_even":
-            raw_data = [data for data in raw_data if data % 2 == 0]
-        if t == "add_ten":
-            raw_data = [data + 10 for data in raw_data]
-        if t == "square":
-            raw_data = [data ** 2 for data in raw_data]
-    
-    return raw_data
+    pass
 
 
 def leaderboard_ranker(scores):
     """
     Rank players by score with proper tie handling.
-    
+
     Args:
         scores: List of tuples (player_name, score)
-        
+
     Returns:
         list: List of tuples (player_name, score, rank) sorted by score descending
-        
+
     Raises:
         ValueError: If tuple doesn't have exactly 2 elements
     """
-
-    for score in scores:
-        if len(score) != 2:
-            raise ValueError
-        
-    sorted_scores = sorted(scores, key=lambda s: s[1], reverse=True)
-    res = []
-
-    for idx, s in enumerate(sorted_scores):
-        if idx == 0:
-            rank = 1
-        elif s[1] == sorted_scores[idx - 1][1]:
-            rank = res[idx - 1][2]
-        else:
-            rank = idx + 1
-        
-        res.append((s[0], s[1], rank))
-    
-    return res
+    pass
 
 
 def smart_cache_system(capacity):
     """
     Create an LRU (Least Recently Used) cache system.
-    
+
     IMPORTANT: You MUST implement this using a class.
-    
+
     Args:
         capacity: Maximum number of items in cache
-        
+
     Returns:
         Cache object with methods:
             - put(key, value): Add/update item
             - get(key): Retrieve item (returns None if not found)
-        
+
     Raises:
         ValueError: If capacity < 1
-        
+
     LRU Behavior:
         - When full, evict least recently used item
         - get() and put() mark items as recently used
     """
-    # TODO: Implement this using a class
-    # Hint: Use OrderedDict or track access order manually
-    
-    class LRUCache:
-        def __init__(self, capacity):
-            # TODO: Initialize cache
-            pass
-        
-        def get(self, key):
-            # TODO: Get value and mark as recently used
-            pass
-        
-        def put(self, key, value):
-            # TODO: Add/update value, evict if necessary
-            pass
-    
-    # Validate capacity
-    if capacity < 1:
-        raise ValueError("Capacity must be at least 1")
-    
-    return LRUCache(capacity)
+    pass
