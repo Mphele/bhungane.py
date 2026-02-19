@@ -201,10 +201,10 @@ def count_vowels(s, count = 0):
         return 0
     
     if s[0] in vowels:
-        return 1+ count_vowels(s[1:])
+        return 1 + count_vowels(s[1:])
     
     else:
-        return 0+ count_vowels(s[1:])
+        return count_vowels(s[1:])
     
 
 def text_pipeline_processor(raw_texts, transformations):
