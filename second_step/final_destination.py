@@ -1,6 +1,7 @@
 # final_assessment_v2.py
 # Complete the following functions according to their docstrings
 
+from collections import Counter
 from statistics import mean
 
 def inventory_report_generator(inventory_data:list[dict]):
@@ -123,7 +124,7 @@ def username_validator_with_retry(max_attempts):
 
 # username_validator_with_retry(3)``
 
-def employee_performance_processor(employees):
+def employee_performance_processor(employees: list[dict[str:list]]):
     """
     Categorize employees by performance rating.
 
@@ -138,10 +139,20 @@ def employee_performance_processor(employees):
         KeyError: If required keys are missing
         ValueError: If scores list is empty
     """
-    pass
 
+    final = {"high_performers":[], "needs_improvement": []}
 
+    for employee in employees:
+        name, scores = employee["name"], employee["scores"]
 
+        average = mean(scores)
+
+        if average>=80:
+            final["high_performers"].append({"name":name, "average":round(average,2)})
+        else:
+            final["needs_improvement"].append({"name":name, "average":round(average,2)})
+    
+    return final
 
 
 def order_batcher(orders, batch_size):
@@ -158,8 +169,33 @@ def order_batcher(orders, batch_size):
     Raises:
         ValueError: If batch_size < 1
     """
-    pass
 
+    if not orders:
+        return []
+    
+    if batch_size<1:
+        raise ValueError
+    
+    wrapper = []
+    batch = []
+
+    for item in orders:
+
+        batch.append(item)
+
+        if len(batch)==batch_size:
+            wrapper.append(batch)
+            batch =[]
+        
+       
+    
+    if batch:
+        wrapper.append(batch)
+    
+    return wrapper
+
+print(order_batcher(["O1", "O2", "O3", "O4", "O5"],
+        2))
 
 def social_network_analyzer(network: dict[str, list[str]]):
     """
@@ -174,7 +210,37 @@ def social_network_analyzer(network: dict[str, list[str]]):
             - most_followed (str | None): user who appears most in others' follow lists
             - no_followers (list[str]): users that nobody follows
     """
-    pass
+
+    if all(lists ==[] for person, lists in network.items()):
+        return {"total_follows": 0, "most_followed": None, "no_followers": [person for person, lists in network.items()]}
+    
+    total_follows = 0
+    follows = []
+    no_follow = []
+
+
+    for person, following in network.items():
+        total_follows+=len(following)
+        follows.extend(following)
+    
+    follow_count = Counter(follows)
+    sorted_follow = sorted(follow_count.items(), key=lambda item:item[1], reverse=True)
+    most_followed = sorted_follow[0][0]
+    
+    for name in network.keys():
+        if name not in follow_count:
+            no_follow.append(name)
+    
+    return {"total_follows": total_follows, "most_followed": most_followed, "no_followers":no_follow}
+
+
+social_network_analyzer({
+    "Alice": ["Bob", "Carol"],
+    "Bob":   ["Carol"],
+    "Carol": [],
+})
+    
+
 
 
 def count_vowels(s, count=0):
@@ -192,10 +258,23 @@ def count_vowels(s, count=0):
     Raises:
         TypeError: If s is not a string
     """
-    pass
+    
+    vowels = "AEIOUaeiou"
+    if not isinstance(s, str):
+        raise TypeError
+    
+    if not s:
+        return 0
+    
+    if s[0] in vowels:
+        return 1+ count_vowels(s[1:])
+    else:
+         return count_vowels(s[1:])
+
+    
 
 
-def text_pipeline_processor(raw_texts, transformations):
+def text_pipeline_processor(raw_texts:list[str], transformations):
     """
     Apply a sequence of transformations to a list of strings.
 
@@ -215,7 +294,25 @@ def text_pipeline_processor(raw_texts, transformations):
     Raises:
         ValueError: For unknown transformations
     """
-    pass
+    
+    if not all(word in ["uppercase", "strip", "remove_empty", "reverse"] for word in transformations ):
+        raise ValueError
+    
+    edited = raw_texts.copy()
+    for trans in transformations:
+        if trans == "uppercase":
+            edited = [word.upper() for word in edited]
+        
+        elif trans =="strip":
+            edited = [word.strip() for word in edited]
+        
+        elif trans =="remove_empty":
+            edited = [word for word in edited if word]
+        
+        else:
+            edited = [word[::-1] for word in edited]
+    
+    return edited
 
 
 def score_ranker(scores):
@@ -232,7 +329,32 @@ def score_ranker(scores):
     Raises:
         ValueError: If any tuple doesn't have exactly 2 elements
     """
-    pass
+    if not scores:
+        return []
+    rank = 1
+    count =1
+    last_score = 0
+    with_rank =[]
+    dict_scores = dict(scores)
+    sorted_scores = sorted(dict_scores.items(), reverse=True, key = lambda item:item[1])
+
+    last_score = sorted_scores[0][0]
+
+    for person in sorted_scores:
+        name, score = person
+
+        if score!=last_score:
+            rank = count
+
+        last_score = score
+        with_rank.append((name, score, rank))
+        count+=1
+    
+    return with_rank
+        
+
+
+
 
 
 def fibonacci(n):
@@ -250,4 +372,26 @@ def fibonacci(n):
     Raises:
         ValueError: If n is negative or not an integer
     """
-    pass
+    
+    if n in [0,1]:
+        return n
+    
+    if n<0 or not isinstance(n, int):
+        raise ValueError
+    
+    return fibonacci(n-1) + fibonacci(n-2)
+
+def reverse_string(s):
+
+    if not s:
+        return []
+    
+    return [s[-1]] + reverse_string(s[:-1])
+
+
+import math
+
+n =5
+
+pascal = [[math.comb(row, col) for col in range(row+1)] for row in range(n)]
+print(pascal)
