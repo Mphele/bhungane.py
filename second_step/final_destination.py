@@ -144,11 +144,6 @@ def employee_performance_processor(employees):
     
     return res
 
-employee_performance_processor([
-    {"name": "Alice", "scores": [90, 85, 88]},
-    {"name": "Bob",   "scores": [70, 65, 75]},
-])
-
 
 def order_batcher(orders, batch_size):
     """
@@ -183,7 +178,7 @@ def social_network_analyzer(network: dict[str, list[str]]):
     pass
 
 
-def count_vowels(s):
+def count_vowels(s, count = 0):
     """
     Count vowels in a string using RECURSION.
 
@@ -198,8 +193,19 @@ def count_vowels(s):
     Raises:
         TypeError: If s is not a string
     """
-    pass
-
+    vowels = "aeiouAEIOU"
+    if not isinstance(s, str):
+        raise TypeError
+    
+    if not s:
+        return 0
+    
+    if s[0] in vowels:
+        return 1+ count_vowels(s[1:])
+    
+    else:
+        return 0+ count_vowels(s[1:])
+    
 
 def text_pipeline_processor(raw_texts, transformations):
     """
